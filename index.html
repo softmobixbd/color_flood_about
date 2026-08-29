@@ -5,37 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About Color Flood</title>
   <style>
+    :root {
+      --bg: #f9f9f9;
+      --fg: #333;
+      --muted: #777;
+      --head: #2c3e50;
+      --sub: #34495e;
+      --rule: #ddd;
+      --card: #ffffff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14181c;
+        --fg: #dfe4e8;
+        --muted: #97a1aa;
+        --head: #e8eef3;
+        --sub: #c6d1da;
+        --rule: #2a3138;
+        --card: #1c2228;
+      }
+    }
+    * { box-sizing: border-box; }
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      padding: 24px 20px 48px;
       max-width: 800px;
       margin: auto;
-      background-color: #f9f9f9;
-      color: #333;
+      background-color: var(--bg);
+      color: var(--fg);
+      line-height: 1.65;
     }
-    h1 {
-      color: #2c3e50;
-    }
+    header { text-align: center; margin-bottom: 36px; }
+    h1 { color: var(--head); font-size: 1.85rem; margin-bottom: 6px; }
+    .tagline { color: var(--muted); font-size: 1.05rem; margin-top: 0; }
     h2 {
-      color: #34495e;
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 5px;
+      color: var(--sub);
+      border-bottom: 2px solid var(--rule);
+      padding-bottom: 6px;
+      margin-top: 40px;
+      font-size: 1.2rem;
     }
-    p {
-      line-height: 1.6;
+    h3 { color: var(--sub); font-size: 1rem; margin-top: 22px; margin-bottom: 4px; }
+    p, li { line-height: 1.65; }
+    ul { padding-left: 22px; }
+    li { margin-bottom: 6px; }
+    a { color: #2a7ae2; }
+    @media (prefers-color-scheme: dark) { a { color: #7db3f5; } }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; font-size: 0.95em; }
+    th, td { border: 1px solid var(--rule); padding: 8px 10px; text-align: left; }
+    th { background: var(--card); }
+    .pull {
+      background: var(--card);
+      border-left: 3px solid var(--sub);
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin: 28px 0;
     }
-    ul {
-      margin-left: 20px;
-    } 
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+    .pull p { margin: 0; }
     footer {
       text-align: center;
       font-size: 14px;
-      margin-top: 40px;
-      color: #999;
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid var(--rule);
+      color: var(--muted);
     }
   </style>
 </head>
@@ -43,36 +77,128 @@
 
   <header>
     <h1>About Color Flood</h1>
-    <p>Use strategy, Match colors, and Flood It!</p>
+    <p class="tagline">Every board is winnable. Prove it in par.</p>
   </header>
 
-  <p><strong>Color Flood</strong> is a minimalistic yet highly addictive puzzle game crafted to test your strategic thinking and color-matching skills. Developed by <strong>SoftMobiXBD</strong>, this game challenges players to flood a colorful grid into a single color within a limited number of moves.</p>
+  <p><strong>Color Flood</strong> is a flood-fill puzzle game by <strong>SoftMobiXBD</strong>.
+  You start in the top-left corner of a coloured grid and pick a colour; every tile touching
+  your region that matches turns with you. Keep choosing until the whole board is one colour
+  — and do it inside the move budget.</p>
 
-  <h2>Gameplay Overview</h2>
-  <p>Start with a randomized grid filled with vibrant colors. Your mission is to turn the entire grid into one single color by gradually expanding from the top-left cell—color by color—within a fixed number of moves. The larger the grid, the tougher the challenge!</p>
+  <p>It is a simple rule with a deep strategy, and version 2.0 rebuilds the game from
+  scratch around one idea: <strong>the puzzle should be hard, never unfair</strong>.</p>
 
-  <h2>Difficulty Levels</h2>
-  <p>Color Flood offers four unique difficulty levels:</p>
+  <h2>What makes version 2.0 different</h2>
+
+  <h3>Every board is proven winnable before you see it</h3>
+  <p>Boards are not simply randomised. Each one is generated and then handed to a solver;
+  if the solver cannot clear it inside the move budget, the board is thrown away and
+  another is generated. A 500-board automated test enforces this on every code change. You
+  will never again lose to a board that could not be won.</p>
+
+  <h3>Every board publishes its par</h3>
+  <p>A beam-search solver computes a near-optimal move count — the board's <em>par</em> —
+  and your stars are awarded against it. Clearing a board is the easy part. Clearing it in
+  par is the game.</p>
+
+  <div class="pull">
+    <p>Version 1 shipped a 22×22 board with a 38-move budget. A near-optimal solver needs
+    about 41 moves on average, so the hardest difficulty was <strong>unwinnable roughly 78%
+    of the time</strong> — and nothing in the game told you. That is the bug version 2 was
+    built to kill.</p>
+  </div>
+
+  <h3>Colour you can actually tell apart</h3>
+  <p>All 12 palettes are validated for perceptual separation — every pair of colours on a
+  board is at least ΔE 22 apart in CIE-Lab space, with a guaranteed spread in lightness.
+  For players who need more, colourblind mode draws a distinct glyph
+  (● ▲ ■ ◆ ★ ✚) on every tile, so colour never carries the information alone.</p>
+
+  <h2>Modes</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Mode</th><th>What it is</th></tr>
+      <tr>
+        <td><strong>Journey</strong></td>
+        <td>A ladder of seeded levels. Stars unlock what comes next, and the grid grows
+          every 20 levels.</td>
+      </tr>
+      <tr>
+        <td><strong>Daily Challenge</strong></td>
+        <td>One board per day, seeded from the date, identical for every player in the
+          world. Build a streak — and keep it.</td>
+      </tr>
+      <tr>
+        <td><strong>Zen</strong></td>
+        <td>No move limit, no fail state, endless boards. For when you want the puzzle
+          without the pressure.</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>Difficulty</h2>
+  <p>Four tiers. The grid grows; the six colours never change. The move budget is
+  calibrated against simulated play — generous enough that a planned game wins about 97%
+  of the time, tight enough that tapping without thinking loses.</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Tier</th><th>Grid</th><th>Moves</th></tr>
+      <tr><td>Relaxed</td><td>10 × 10</td><td>22</td></tr>
+      <tr><td>Steady</td><td>14 × 14</td><td>30</td></tr>
+      <tr><td>Sharp</td><td>18 × 18</td><td>39</td></tr>
+      <tr><td>Ruthless</td><td>22 × 22</td><td>47</td></tr>
+    </table>
+  </div>
+
+  <h2>Playing well</h2>
   <ul>
-    <li><strong>Easy</strong> – Smaller grid, more forgiving.</li>
-    <li><strong>Medium</strong> – A balanced challenge.</li>
-    <li><strong>Hard</strong> – Requires sharp strategy.</li>
-    <li><strong>Extreme</strong> – For true puzzle masters.</li>
+    <li><strong>Long-press a colour</strong> to preview exactly what it would capture
+      before you commit to it.</li>
+    <li><strong>Tap a tile on the board</strong> to play its colour directly.</li>
+    <li><strong>Undo</strong> — three free per level, then 25 coins each.</li>
+    <li><strong>Hint</strong> — the same solver that verified the board tells you its next
+      move.</li>
+    <li><strong>Coins</strong> are earned by clearing boards: 10, 20, or 30 for one, two,
+      or three stars, plus 50 for a Daily clear.</li>
   </ul>
-  <p>Each level increases the grid size from <strong>10x10 up to 22x22</strong>, and players are given <strong>20 to 38 moves</strong>, depending on the level.</p>
 
-  <h2>Who Can Play?</h2>
-  <p>Color Flood is designed for players aged <strong>13 and up</strong>. Whether you're a casual gamer or someone who enjoys thoughtful strategy games, Color Flood delivers a satisfying and relaxing gameplay experience.</p>
+  <h2>Built to be played by everyone</h2>
+  <ul>
+    <li>Colourblind mode with per-colour glyphs</li>
+    <li>12 palettes, each contrast-validated, in both light and dark themes</li>
+    <li>Reduce-motion setting, which also respects the system-wide Android setting</li>
+    <li>Haptics, sound effects, and music, each independently switchable</li>
+    <li>Screen-reader labels on the board and the colour palette</li>
+    <li>An interactive tutorial — four hand-built boards where the lesson <em>is</em> the
+      way through, with no walls of text to skip</li>
+  </ul>
 
-  <h2>Free to Play</h2>
-  <p>The Color Flood is <strong>completely free</strong>. It includes banner ads on menus, rewarded ads for have extra moves when you want to continue after losing. There are no in-app purchases.</p> 
+  <h2>Sound</h2>
+  <p>Every effect is synthesised on a C major pentatonic scale, one pitch per palette slot,
+  so fast tapping stays musical instead of turning into noise. The flood sound even changes
+  pitch with the size of the region you just captured.</p>
 
-  <h2>Developer Info</h2>
+  <h2>Free, offline, and not full of ads</h2>
+  <p>Color Flood is <strong>completely free</strong>. There are <strong>no banner ads</strong>,
+  and an ad will <strong>never interrupt a puzzle in progress</strong>. The only ads are
+  optional reward videos you can choose to watch for extra moves — and every board is
+  winnable without ever watching one.</p>
+  <p>The game needs no account, no sign-in, and no internet connection to play. Your
+  progress stays on your device. See our
+  <a href="privacy_policy.html">Privacy Policy</a> and
+  <a href="terms.html">Terms of Use</a>.</p>
+
+  <h2>Who it is for</h2>
+  <p>Color Flood is rated for players aged <strong>13 and up</strong>. It suits anyone who
+  likes a clean, thoughtful puzzle — whether that means two minutes on a Daily Challenge or
+  a long, quiet run at a 22×22 board.</p>
+
+  <h2>Developer</h2>
   <p><strong>SoftMobiXBD</strong><br>
   Contact: <a href="mailto:softmobixbd@gmail.com">softmobixbd@gmail.com</a></p>
 
   <footer>
-    &copy; 2025 Color Flood by Softmobix. All rights reserved.
+    &copy; 2026 Color Flood by SoftMobiXBD. All rights reserved.
   </footer>
 
 </body>
